@@ -2,12 +2,23 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 class BookService {
-    async getData() {
-        return await prisma.book.findMany()
+    async getData(take, skip, order, column, where) {
+        return await prisma.book.findMany({
+            where,
+            take,
+            skip,
+            orderBy: {
+                [column]: order
+            },
+            include: {
+                authors: true,
+                genres: true
+            },
+        })
     }
 
     async getDataById(id) {
-        const data = await prisma.book.findFirst({ where: { id: parseInt(id) }})
+        const data = await prisma.book.findFirst({ where: { id: parseInt(id) }, include: { authors:true, genres: true }})
         if(!data) {
             return { status: 404, message: "book not found" }
         }
@@ -20,13 +31,13 @@ class BookService {
             data: {
                 name,
                 photo,
-                price
-            },
-            authors: {
-                connect: authors.map((id) => ({ id }))
-            },
-            genres: {
-                connect: genres.map((id) => ({ id }))
+                price,
+                authors: {
+                    connect: authors.map((id) => ({ id }))
+                },
+                genres: {
+                    connect: genres.map((id) => ({ id }))
+                },
             },
             include: {
                 genres: true,
@@ -68,7 +79,11 @@ class BookService {
             return { status: 404, message: "book not found" }
         }
         return await prisma.book.delete({
-            where: {id: parseInt(id)}
+            where: {id: parseInt(id)},
+            include: {
+                authors: true,
+                genres: true
+            }
         })
     }
 };

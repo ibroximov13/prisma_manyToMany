@@ -8,17 +8,17 @@ class AuthorController {
             const take = parseInt(req.query.take) || 10;
             const skip = ( page - 1) * take;
             const contains = req.query.contains?.trim();
-            const order = req.query.order === "DESC" ? "DESC" : "ASC";
+            const order = req.query.order === "desc" ? "desc" : "asc";
             const allowedColumns = ["id", "name"];
             const column = allowedColumns.includes(req.query.column) ? req.query.column : "id"; 
 
             let where = {};
             if (contains) {
-                where.OR = [
-                    { id: { contains, mode: "insensitive" }},
-                    { name: { contains, mode: "insensitive" }}
-                ]
-            };
+                where.name = {
+                  contains,
+                  mode: 'insensitive'
+                };
+            }
             const data = await authorService.getData( take, skip, where, order, column)
             if(data.status && data.status !== 200) {
                 return res.status(data.status).send({message: data.message});

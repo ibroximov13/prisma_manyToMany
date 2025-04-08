@@ -1,17 +1,24 @@
-const { Router } = require("express");
-const upload = require("../config/multer");
-const uploadImage = require("../controllers/upload.controller");
+const { Router } = require('express');
+const multer = require('multer');
+const upload = require('../config/multer');
+const { uploadImage } = require('../controllers/upload.controller');
 
-class UploadRoute {
-    constructor() {
-        this.route = Router();
-        this.initRoutes()
-    };
+const router = Router();
 
-    initRoutes() {
-        this.route.post("/", upload.single("image"), uploadImage);
-    };
-};
+router.post('/', upload.single('image'), uploadImage, (error, req, res, next) => {
+    if (error instanceof multer.MulterError) {
+        return res.status(400).json({
+            success: false,
+            error: error.message
+        });
+    }
+    if (error) {
+        return res.status(400).json({
+            success: false,
+            error: error.message
+        });
+    }
+    next();
+});
 
-const uploadRoute = new UploadRoute().route;
-module.exports = uploadRoute
+module.exports = router;

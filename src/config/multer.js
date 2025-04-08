@@ -1,36 +1,37 @@
-const multer = require("multer");
-const fs = require("fs");
-const path = require("path");
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
-const uploadDir = path.join(__dirname, "../uploads");
-
-fs.promises.mkdir(uploadDir, { recursive: true }).then(() => {
-    console.log("upoladUser`s folder created");
-}).catch(err => {
-    console.error("Error creating folder", err);
-});
+// Uploads papkasini yaratish
+const uploadDir = 'uploads/';
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir);
+}
 
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, uploadDir);
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');
     },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-        const safeFilename = path.basename(file.originalname);
-        cb(null, uniqueSuffix + path.extname(safeFilename));
-    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const ext = path.extname(file.originalname);
+        cb(null, `${uniqueSuffix}${ext}`);
+    }
 });
 
 const fileFilter = (req, file, cb) => {
-    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-    
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
     if (allowedTypes.includes(file.mimetype)) {
         cb(null, true);
     } else {
-        cb(new Error("Only image files can be uploaded!"), false);
+        cb(new Error('Faqat JPEG, PNG va GIF rasmlar qo‘llab-quvvatlanadi'), false);
     }
 };
 
-const upload = multer({ storage, fileFilter });
+const upload = multer({
+    storage: storage,
+    fileFilter: fileFilter,
+    limits: { fileSize: 5 * 1024 * 1024 } // 5MB chegarasi
+});
 
 module.exports = upload;

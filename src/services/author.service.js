@@ -18,7 +18,7 @@ class AuthorService {
         if(!data) {
             return { status: 404, message: "Author not found" }
         }
-        return data
+        return data;
     };
 
     async createData(data) {

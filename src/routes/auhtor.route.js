@@ -16,5 +16,5 @@ class AuthorRoute {
     }
 };
 
-const authorRoute = new AuthorRoute();
+const authorRoute = new AuthorRoute().route;
 module.exports = authorRoute;

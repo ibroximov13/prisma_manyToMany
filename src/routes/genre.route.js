@@ -16,5 +16,5 @@ class GenreRoute {
     }
 };
 
-const genreRoute = new GenreRoute()
+const genreRoute = new GenreRoute().route;
 module.exports = genreRoute;
