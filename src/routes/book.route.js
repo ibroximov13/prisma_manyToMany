@@ -1,4 +1,5 @@
 const { Router } = require("express");
+const bookController = require("../controllers/book.controller");
 
 class BookRoute {
     constructor() {
@@ -7,7 +8,11 @@ class BookRoute {
     };
 
     initRoutes() {
-        this.route.get()
+        this.route.get("/", bookController.getData);
+        this.route.get("/:id", bookController.getDataById);
+        this.route.post("/", bookController.createData);
+        this.route.patch("/:id", bookController.updateData);
+        this.route.delete("/:id", bookController.deleteData);
     }
 };
 

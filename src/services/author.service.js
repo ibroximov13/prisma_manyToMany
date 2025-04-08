@@ -2,8 +2,15 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 class AuthorService {
-    async getData(){ 
-        return await prisma.author.findMany()
+    async getData(take, skip, where, order, column){ 
+        return await prisma.author.findMany({
+            where,
+            take,
+            skip,
+            orderBy: {
+                [column]: order
+            }
+        })
     };
 
     async getDataById(id) {
